@@ -41,9 +41,12 @@ A minimalist todo list application built with React Native and Expo, featuring a
 - `app/index.jsx`: Main todo list screen
 - `data/todos.js`: Initial todo data
 
-## Screenshots
+## Video
 
-[Consider adding a screenshot of your dark-themed todo app here]
+
+https://github.com/user-attachments/assets/d3c17850-6494-4349-8505-b7dedc540678
+
+
 
 ## License
 
