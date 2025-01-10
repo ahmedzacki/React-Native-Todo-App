@@ -43,8 +43,8 @@ A minimalist todo list application built with React Native and Expo, featuring a
 
 ## Video
 
+![react-native-todo-app-video-1](https://github.com/user-attachments/assets/3bb40ff5-8e0f-4a8f-8122-c8a0e0302986)
 
-https://github.com/user-attachments/assets/d3c17850-6494-4349-8505-b7dedc540678
 
 
 
