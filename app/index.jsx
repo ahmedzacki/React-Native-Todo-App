@@ -1,145 +1,124 @@
-import React from "react";
-import { Text, View, StyleSheet, ScrollView, TextInput, Button, Alert, FlatList } from "react-native";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, View, TextInput, Pressable, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import the data list from the data/todos.js file
-import { data } from '@/data/todos.js';
+import { useState } from "react";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-
-// I am going to create a simple CRUD app using React Native and Expo.
-// I will use the following technologies:
-// - React Native
-// - Expo
-// - React Navigation
-// - React Native Elements
-
+import { data } from "@/data/todos"
 
 export default function Index() {
+  const [todos, setTodos] = useState(data.sort((a, b) => b.id - a.id))
+  const [text, setText] = useState('')
 
-  const [text, onChangeText] = React.useState('');
+  const addTodo = () => {
+    if (text.trim()) {
+      const newId = todos.length > 0 ? todos[0].id + 1 : 1;
+      setTodos([{ id: newId, title: text, completed: false }, ...todos])
+      setText('')
+    }
+  }
 
-  const Separator = () => <View style={styles.separator} />;
-
-  const [todos, setTodos] = React.useState(data);
-
-  const addTodo = (title) => {
-    setTodos([...todos, { id: todos.length + 1, title: title, completed: false }]);
-    onChangeText('');
-  };
+  const toggleTodo = (id) => {
+    setTodos(todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+  }
 
   const removeTodo = (id) => {
-    // instead of deleting the todo, I am going to set the completed property to true
-    setTodos(todos.map((todo) => todo.id === id ? { ...todo, completed: true } : todo));
-  };
+    setTodos(todos.filter(todo => todo.id !== id))
+  }
+
+  const renderItem = ({ item }) => (
+    <View style={styles.todoItem}>
+      <Text
+        style={[styles.todoText, item.completed && styles.completedText]}
+        onPress={() => toggleTodo(item.id)}
+      >
+        {item.title}
+      </Text>
+      <Pressable onPress={() => removeTodo(item.id)}>
+        <MaterialCommunityIcons name="delete-circle" size={36} color="red" selectable={undefined} />
+      </Pressable>
+    </View>
+  )
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Add a new todo"
-            placeholderTextColor="#666"
-          />
-          <View style={styles.addButton}>
-            <Button
-              title="Add"
-              onPress={() => addTodo(text)}
-              color="#000"
-            />
-          </View>
-        </View>
-
-        {/* Body */}
-        <View style={styles.body}>
-          <FlatList
-            data={todos}
-            style={styles.list}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.todoItem}>
-                <Text style={item.completed ? styles.todoCompleted : styles.todoText}>
-                  {item.title}
-                </Text>
-                <Icon 
-                  name="trash" 
-                  size={20} 
-                  color="#ff4444"
-                  style={styles.deleteIcon}
-                  onPress={() => removeTodo(item.id)} 
-                />
-              </View>
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Add a new todo"
+          placeholderTextColor="gray"
+          value={text}
+          onChangeText={setText}
+        />
+        <Pressable onPress={addTodo} style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add</Text>
+        </Pressable>
       </View>
+      <FlatList
+        data={todos}
+        renderItem={renderItem}
+        keyExtractor={todo => todo.id}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    padding: 16,
+    backgroundColor: 'black',
   },
-  header: {
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    gap: 10,
+    marginBottom: 10,
+    padding: 10,
+    width: '100%',
+    maxWidth: 1024,
+    marginHorizontal: 'auto',
+    pointerEvents: 'auto',
   },
   input: {
     flex: 1,
-    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 8,
+    borderRadius: 5,
     padding: 10,
-    color: '#fff',
-    backgroundColor: '#111',
+    marginRight: 10,
+    fontSize: 18,
+    minWidth: 0,
+    color: 'white',
   },
-  body: {
-    flex: 1,
+  addButton: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
   },
-  list: {
-    flex: 1,
+  addButtonText: {
+    fontSize: 18,
+    color: 'black',
   },
   todoItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    justifyContent: 'space-between',
+    gap: 4,
+    padding: 10,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+    width: '100%',
+    maxWidth: 1024,
+    marginHorizontal: 'auto',
+    pointerEvents: 'auto',
   },
   todoText: {
-    color: '#fff',
-    fontSize: 16,
+    flex: 1,
+    fontSize: 18,
+    color: 'white',
   },
-  todoCompleted: {
-    color: '#666',
-    fontSize: 16,
+  completedText: {
     textDecorationLine: 'line-through',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#333',
-  },
-  deleteIcon: {
-    padding: 8,
-    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-    borderRadius: 20,
-  },
-  addButton: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-});
+    color: 'gray',
+  }
+})
