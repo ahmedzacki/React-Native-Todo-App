@@ -41,13 +41,6 @@ A minimalist todo list application built with React Native and Expo, featuring a
 - `app/index.jsx`: Main todo list screen
 - `data/todos.js`: Initial todo data
 
-## Video
-
-![react-native-todo-app-video-1](https://github.com/user-attachments/assets/3bb40ff5-8e0f-4a8f-8122-c8a0e0302986)
-
-
-
-
 ## License
 
 This project is open source and available under the MIT License.
